@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+  <title>Modular Histogram</title>
+</head>
+<style>
+
+body {
+  font: 10px sans-serif;
+  margin: 0;
+}
+
+.bar rect {
+  fill: steelblue;
+  shape-rendering: crispEdges;
+}
+
+.bar text {
+  fill: #fff;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+  background-color: white;
+  z-index: 10000;
+}
+
+#page {
+  margin: 0 auto 0 auto;
+  width: 700px;
+  border: 1px solid gray;
+  padding: 20px;
+}
+
+#means, #population {
+  width: 300px;
+  height: 200px;
+  border: 1px solid gray;
+  padding: 20px;
+  margin: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#means svg, #population svg {
+  /* height: 100%; */
+}
+
+</style>
+<body>
+<script src="d3/d3.min.js"></script>
+<script src="livehistogram.js"></script>
+
+<article id="page">
+
+<h1>Live Sample</h1>
+
+<div id="means"></div>
+
+<div id="population"></div>
+
+
+<script>
+
+// Returns a random integer between min (included) and max (excluded)
+// Using Math.round() will give you a non-uniform distribution!
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+// Create the reference chart to view the population distribution
+popChart = new LiveHistogram("#population");
+
+// Generate a skewed log-normal population
+var population = d3.range(1000).map(d3.random.logNormal(0, 1));
+popChart.update(population);
+
+meansChart = new LiveHistogram("#means");
+
+/**
+ * singleMean: Compute and plot one mean
+ * -------------------------------------
+ * Parameters:
+ *   population: the data set of which to take a mean of samples
+ *   means: the array of means already computed (needed for the chart)
+ *   samplesPerMean: the number of samples to take and average together
+ *   chart: the chart on which to draw the data
+ */
+function singleMean(population, means, samplesPerMean, chart) {
+  var sum = 0;
+  for (var j = 0; j < samplesPerMean; j++){
+    sum += population[getRandomInt(0, population.length)];
+  }
+  // Compute the mean of the samples
+  means.push(sum / samplesPerMean);
+  chart.update(means);
+}
+
+/**
+ * animateMeans: Animate the computation of many sample means
+ * ----------------------------------------------------------
+ * Parameters:
+ *   population: the data set from which to take the means
+ *   chart: the chart on which to draw the animation of mean counts
+ *
+ * animateMeans makes use of singleMean, dispathed through a callback on a timer.
+ * As singleMean calls evaluate in the background, the chart shows the updated
+ * count of each mean, such that over time a normal distribution appears.
+ */
+function animateMeans(population, chart) {
+  // Take many means
+  // Each mean the average of samplesPerMean random samples
+  var meanCount = 1000; // The number of means to find
+  var samplesPerMean = 30; // The number of samples in each mean
+  var means = [ ];
+  for (var i = 0; i < meanCount; i++){
+    setTimeout(function(){singleMean(population, means, samplesPerMean, chart);}, i*20);
+  }
+}
+
+animateMeans(population, meansChart);
+
+</script>
+
+</article>
