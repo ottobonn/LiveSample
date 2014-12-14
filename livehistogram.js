@@ -16,17 +16,17 @@ function LiveHistogram(id, properties) {
   }
 
   this.formatCount = d3.format(",.0f");
-  this.bins = 20;
+  this.bins = (properties && properties.bins) ? properties.bins : 20;
   this.transitionDuration = 100;
   this.transitionDelay = 0;
-  this.transitionEasing = "elastic";
+  this.transitionEasing = (properties && properties.easing) ? properties.easing : "elastic";
 
   this.container = d3.select(id);
   this.margin = {
-    top: parseFloat(this.container.style("padding-top")), 
-    right: parseFloat(this.container.style("padding-right")), 
+    top:    parseFloat(this.container.style("padding-top")), 
+    right:  parseFloat(this.container.style("padding-right")), 
     bottom: parseFloat(this.container.style("padding-bottom")), 
-    left: parseFloat(this.container.style("padding-left"))
+    left:   parseFloat(this.container.style("padding-left"))
   };
   this.width = parseFloat(this.container.style("width"), 10) - this.margin.left - this.margin.right;
   this.height = parseFloat(this.container.style("height"), 10) - this.margin.top - this.margin.bottom;
@@ -115,7 +115,7 @@ LiveHistogram.prototype.update = function(values) {
 
         // Display new labels
         bars.select("text")
-          .text(function(d) { return formatCount(d.y); });
+          .text(function(d) { return d.y > 0 ? formatCount(d.y) : ""; });
       });
 
   // Exit functions: run when data are deleted

@@ -8,6 +8,23 @@
 body {
   font: 10px sans-serif;
   margin: 0;
+  background-color: #aaa;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Raleway", sans-serif;
+}
+
+h1 {
+  font-size: 4em;
+}
+
+h2 {
+  font-size: 3em;
+}
+
+h3 {
+  font-size: 2.5em;
 }
 
 .bar rect {
@@ -16,7 +33,8 @@ body {
 }
 
 .bar text {
-  fill: #fff;
+  fill: #000;
+  display: none;
 }
 
 .axis path, .axis line {
@@ -29,19 +47,28 @@ body {
 
 #page {
   margin: 0 auto 0 auto;
-  width: 700px;
-  border: 1px solid gray;
+  width: 1200px;
+  border: 1px solid #ccc;
   padding: 20px;
+  background-color: #dedede;
 }
 
 #means, #population {
-  width: 300px;
-  height: 200px;
-  border: 1px solid gray;
-  padding: 20px;
   margin: 20px;
   margin-left: auto;
   margin-right: auto;
+}
+
+#population {
+  width: 1000px;
+  height: 400px;
+  padding: 10px;
+}
+
+#means {
+  width: 1000px;
+  height: 400px;
+  padding: 20px;
 }
 
 #means svg, #population svg {
@@ -57,9 +84,12 @@ body {
 
 <h1>Live Sample</h1>
 
-<div id="means"></div>
-
+<h2>1. View Population</h2>
 <div id="population"></div>
+
+<h2>2. Watch Random Means</h2>
+<h3>Means: <span id="meansCounter"></span></h3>
+<div id="means"></div>
 
 
 <script>
@@ -70,14 +100,27 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+
+
 // Create the reference chart to view the population distribution
 popChart = new LiveHistogram("#population");
 
 // Generate a skewed log-normal population
 var population = d3.range(1000).map(d3.random.logNormal(0, 1));
-popChart.update(population);
 
-meansChart = new LiveHistogram("#means");
+popProperties = {
+  bins: 20,
+  easing: "linear"
+};
+
+popChart.update(population, popProperties);
+
+meansProperties = {
+  bins: 40,
+  easing: "linear"
+};
+
+meansChart = new LiveHistogram("#means", meansProperties);
 
 /**
  * singleMean: Compute and plot one mean
@@ -96,6 +139,8 @@ function singleMean(population, means, samplesPerMean, chart) {
   // Compute the mean of the samples
   means.push(sum / samplesPerMean);
   chart.update(means);
+  // Update the sample means counter
+  d3.select("#meansCounter").text(means.length);
 }
 
 /**
@@ -114,9 +159,10 @@ function animateMeans(population, chart) {
   // Each mean the average of samplesPerMean random samples
   var meanCount = 1000; // The number of means to find
   var samplesPerMean = 30; // The number of samples in each mean
+  var delay = 100; // Delay in milliseconds between each mean displayed
   var means = [ ];
   for (var i = 0; i < meanCount; i++){
-    setTimeout(function(){singleMean(population, means, samplesPerMean, chart);}, i*20);
+    setTimeout(function(){singleMean(population, means, samplesPerMean, chart);}, i*delay);
   }
 }
 
