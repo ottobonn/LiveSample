@@ -8,7 +8,7 @@
 body {
   font: 10px sans-serif;
   margin: 0;
-  background-color: #aaa;
+  background-color: #090909;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -30,6 +30,8 @@ h3 {
 .bar rect {
   fill: steelblue;
   shape-rendering: crispEdges;
+  stroke: white;
+  stroke-weight: 1px;
 }
 
 .bar text {
@@ -42,7 +44,6 @@ h3 {
   stroke: #000;
   shape-rendering: crispEdges;
   background-color: white;
-  z-index: 10000;
 }
 
 #page {
@@ -50,19 +51,21 @@ h3 {
   width: 1200px;
   border: 1px solid #ccc;
   padding: 20px;
-  background-color: #dedede;
+  background-color: #eeeeee;
 }
 
 #means, #population {
   margin: 20px;
   margin-left: auto;
   margin-right: auto;
+  background-color: white;
+  border: 1px solid gray;
 }
 
 #population {
   width: 1000px;
   height: 400px;
-  padding: 10px;
+  padding: 20px;
 }
 
 #means {
@@ -77,7 +80,8 @@ h3 {
 
 </style>
 <body>
-<script src="d3/d3.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<!--<script src="d3/d3.min.js"></script>-->
 <script src="livehistogram.js"></script>
 
 <article id="page">
@@ -157,7 +161,7 @@ function singleMean(population, means, samplesPerMean, chart) {
 function animateMeans(population, chart) {
   // Take many means
   // Each mean the average of samplesPerMean random samples
-  var meanCount = 1000; // The number of means to find
+  var meanCount = 100; // The number of means to find
   var samplesPerMean = 30; // The number of samples in each mean
   var delay = 100; // Delay in milliseconds between each mean displayed
   var means = [ ];

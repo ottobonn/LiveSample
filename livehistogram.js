@@ -85,11 +85,11 @@ LiveHistogram.prototype.update = function(values) {
   barEntryGroup = barEntry.append("g")
       .attr("class", "bar")
       .style("z-index", 0)
-      .attr("transform", function(d) { return "translate(" + x(d.x) + "," + height + ")"; });
+      .attr("transform", function(d) { return "translate(" + x(d.x) + 2 + "," + height + ")"; });
 
   barEntryGroup.append("rect")
       .attr("x", 1)
-      .attr("width", barWidth - 1)
+      .attr("width", barWidth - 3)
       .attr("height", 0);
 
   barEntryGroup.append("text")
