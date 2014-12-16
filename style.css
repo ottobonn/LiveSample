@@ -1,0 +1,72 @@
+body {
+  font: 10px sans-serif;
+  margin: 0;
+  background-color: #090909;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Raleway", sans-serif;
+}
+
+h1 {
+  font-size: 4em;
+}
+
+h2 {
+  font-size: 3em;
+}
+
+h3 {
+  font-size: 2.5em;
+}
+
+.bar rect {
+  fill: steelblue;
+  shape-rendering: crispEdges;
+  stroke: white;
+  stroke-weight: 1px;
+}
+
+.bar text {
+  fill: #000;
+  display: none;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+  background-color: white;
+}
+
+#page {
+  margin: 0 auto 0 auto;
+  width: 1200px;
+  border: 1px solid #ccc;
+  padding: 20px;
+  background-color: #eeeeee;
+}
+
+#means, #population {
+  margin: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  border: 1px solid gray;
+}
+
+#population {
+  width: 1000px;
+  height: 400px;
+  padding: 20px;
+}
+
+#means {
+  width: 1000px;
+  height: 400px;
+  padding: 20px;
+}
+
+#means svg, #population svg {
+  /* height: 100%; */
+}
