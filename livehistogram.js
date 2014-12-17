@@ -23,13 +23,19 @@ function LiveHistogram(id, properties) {
 
   this.container = d3.select(id);
   this.margin = {
-    top:    parseFloat(this.container.style("padding-top")), 
-    right:  parseFloat(this.container.style("padding-right")), 
-    bottom: parseFloat(this.container.style("padding-bottom")), 
-    left:   parseFloat(this.container.style("padding-left"))
+    top:    10,
+    right:  10,
+    bottom: 50,
+    left:   10
   };
-  this.width = parseFloat(this.container.style("width"), 10) - this.margin.left - this.margin.right;
-  this.height = parseFloat(this.container.style("height"), 10) - this.margin.top - this.margin.bottom;
+
+  var svgWidth = parseFloat(this.container.style("width"), 10);
+  var svgHeight = parseFloat(this.container.style("height"), 10);
+
+  // Chart area width and height
+  this.width = svgWidth - this.margin.left - this.margin.right;
+  this.height = svgHeight - this.margin.top - this.margin.bottom;
+
   this.barWidth = this.width / this.bins;
 
   this.x = d3.scale.linear()
@@ -41,8 +47,8 @@ function LiveHistogram(id, properties) {
       .orient("bottom");
 
   this.svg = this.container.append("svg")
-      .attr("width", this.width + this.margin.left + this.margin.right)
-      .attr("height", 2 * this.height + this.margin.top + this.margin.bottom)
+      .attr("width", svgWidth)
+      .attr("height", svgHeight)
     .append("g")
       .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
@@ -123,6 +129,7 @@ LiveHistogram.prototype.update = function(values) {
   bars.exit().remove();
 }
 
-//LiveHistogram.prototype.transition = function(){
-//  return this.transition;
-//}
+LiveHistogram.prototype.reset = function(){
+  var values = [ ];
+  this.update(values);
+}

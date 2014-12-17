@@ -1,46 +1,34 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <head>
-  <title>Modular Histogram</title>
+  <title>LiveSample Central Limit Theorem</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-<script src="d3/d3.min.js"></script>
-<script src="livehistogram.js"></script>
-<script src="livesample.js"></script>
+  <script src="d3/d3.min.js"></script>
+  <script src="jquery/jquery-2.1.1.min.js"></script>
+  <script src="livehistogram.js"></script>
+  <script src="livesample.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
-<article id="page">
+  <article id="page">
 
-<h1>Live Sample</h1>
+    <h1>Live Sample</h1>
 
-<h2>1. View Population</h2>
-<div id="population"></div>
+    <h2>1. View Population</h2>
+    <div id="population"></div>
 
-<h2>2. Watch Random Means</h2>
-<h3>Means: <span id="meansCounter"></span></h3>
-<div id="means"></div>
+    <h2>2. Watch Random Means</h2>
 
-<script>
+    <div class="btn-group" role="group" aria-label="Means Chart Controls">
+      <button type="button" class="btn btn-primary" id="means-play-button" data-pause-text="Pause Sampling">Begin Sampling</button>
+      <button type="button" class="btn btn-default" id="means-reset-button">Reset</button>
+    </div>
 
-popProperties = {
-  bins: 20,
-  easing: "linear"
-};
-meansProperties = {
-  bins: 40,
-  easing: "linear"
-};
+    <h3>Means: <span id="meansCounter">0</span></h3>
+    <div id="means"></div>
 
-// Create the reference chart to view the population distribution
-popChart = new LiveHistogram("#population", popProperties);
-
-// Generate a skewed log-normal population
-var population = d3.range(1000).map(d3.random.logNormal(0, 1));
-popChart.update(population);
-
-meansChart = new LiveHistogram("#means", meansProperties);
-animateMeans(population, meansChart);
-</script>
-
-</article>
+  </article>
+</body>

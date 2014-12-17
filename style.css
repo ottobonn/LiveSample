@@ -1,23 +1,10 @@
 body {
-  font: 10px sans-serif;
   margin: 0;
-  background-color: #090909;
+  background-color: white;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Raleway", sans-serif;
-}
 
-h1 {
-  font-size: 4em;
-}
-
-h2 {
-  font-size: 3em;
-}
-
-h3 {
-  font-size: 2.5em;
 }
 
 .bar rect {
@@ -44,7 +31,7 @@ h3 {
   width: 1200px;
   border: 1px solid #ccc;
   padding: 20px;
-  background-color: #eeeeee;
+  background-color: #f5f5f5;
 }
 
 #means, #population {
@@ -53,6 +40,7 @@ h3 {
   margin-right: auto;
   background-color: white;
   border: 1px solid gray;
+  box-sizing: content-box;
 }
 
 #population {
@@ -65,8 +53,4 @@ h3 {
   width: 1000px;
   height: 400px;
   padding: 20px;
-}
-
-#means svg, #population svg {
-  /* height: 100%; */
 }
