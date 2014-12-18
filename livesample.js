@@ -33,6 +33,19 @@ function variance (samples) {
 }
 
 /**
+* mean: Compute the sample mean of an array of values
+* ---------------------------------------------------
+* Computes the mean of the given array of values.
+*/
+function mean (samples) {
+  var sum = 0;
+  for(var i = 0, l = samples.length; i < l; i++){
+    sum += samples[i];
+  }
+  return sum / samples.length;
+}
+
+/**
  * animateMeans: Animate the computation of many sample means
  * ----------------------------------------------------------
  * Parameters:
@@ -74,11 +87,6 @@ function variance (samples) {
     }
    }, delay); // setTimeout
    return animationInterval;
-}
-
-function resetMeans(chart){
-  chart.reset();
-  d3.select("#meansCounter").text(0); // TODO remove hardwired select
 }
 
 $(document).ready(function(){
@@ -131,7 +139,8 @@ $(document).ready(function(){
   });
 
   $('#means-reset-button').on('click', function () {
-    resetMeans(meansChart);
+    meansChart.reset();
+    d3.select("#meansCounter").text(0); // TODO remove hardwired select
     means = [ ];
   });
 }); // $(document).ready
