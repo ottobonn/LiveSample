@@ -45,6 +45,13 @@ function mean (samples) {
   return sum / samples.length;
 }
 
+function progressBar (percent){
+  d3.select("#means-bar")
+    .style("width", percent + "%")
+    .attr("aria-valuenow", percent)
+    .text(Math.round(percent) + "%");
+}
+
 /**
  * animateMeans: Animate the computation of many sample means
  * ----------------------------------------------------------
@@ -62,7 +69,7 @@ function mean (samples) {
  function animateMeans(population, chart, means, callback) {
    // Take many means
    // Each mean the average of samplesPerMean random samples
-   var meanCount = 100; // The number of means to find
+   var meanCount = 1000; // The number of means to find
    var samplesPerMean = 30; // The number of samples in each mean
    var delay = 100; // Delay in milliseconds between each mean displayed
    var count = means.length;
@@ -78,6 +85,7 @@ function mean (samples) {
        chart.update(means);
        // Update the sample means counter
        d3.select("#meansCounter").text(means.length); // TODO remove hardwired select
+       progressBar(count/meanCount*100);
        count++;
     } else {
       // If the counter has expired, dequeue future updates.
@@ -139,8 +147,12 @@ $(document).ready(function(){
   });
 
   $('#means-reset-button').on('click', function () {
+    running = false;
+    clearInterval(animationInterval);
+    $('#means-play-button').button('reset');
     meansChart.reset();
     d3.select("#meansCounter").text(0); // TODO remove hardwired select
     means = [ ];
+    progressBar(0);
   });
 }); // $(document).ready
