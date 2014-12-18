@@ -10,10 +10,8 @@
  */
 
 function LiveHistogram(id, properties) {
-  if (!id){
+  if (!id)
     console.log ("Histogram must be constructed with valid container element id.");
-    return -1;
-  }
 
   this.formatCount = d3.format(",.0f");
   this.bins = (properties && properties.bins) ? properties.bins : 20;

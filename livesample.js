@@ -38,22 +38,24 @@ function singleMean(population, means, samplesPerMean, chart) {
  * Parameters:
  *   population: the data set from which to take the means
  *   chart: the chart on which to draw the animation of mean counts
+ *   means: the array of means computed so far. Pass in empty array to start fresh.
  *
- * animateMeans makes use of singleMean, dispathed through a callback on a timer.
- * As singleMean calls evaluate in the background, the chart shows the updated
+ * animateMeans makes use of singleMean, dispatched through a callback on a timer.
+ * As single mean calls evaluate in the background, the chart shows the updated
  * count of each mean, such that over time a normal distribution appears.
+ * The MEANS parameter is a way to fetch the means computed so far so you can pause
+ * the animation and resume where it left off.
  */
- function animateMeans(population, chart) {
+ function animateMeans(population, chart, means) {
    // Take many means
    // Each mean the average of samplesPerMean random samples
    var meanCount = 100; // The number of means to find
    var samplesPerMean = 30; // The number of samples in each mean
    var delay = 100; // Delay in milliseconds between each mean displayed
-   var means = [ ];
-   var counter = meanCount;
+   var count = means.length;
 
    var animationInterval = setInterval(function(){
-     if (counter){
+     if (count < meanCount){
        var sum = 0;
        for (var j = 0; j < samplesPerMean; j++){
          sum += population[getRandomInt(0, population.length)];
@@ -63,7 +65,7 @@ function singleMean(population, means, samplesPerMean, chart) {
        chart.update(means);
        // Update the sample means counter
        d3.select("#meansCounter").text(means.length); // TODO remove hardwired select
-       counter--;
+       count++;
     } else {
       // If the counter has expired, dequeue future updates.
       clearInterval (animationInterval);
@@ -103,6 +105,9 @@ $(document).ready(function(){
   // The animation interval is set and cleared based on RUNNING.
   var animationInterval;
 
+  // The means array holds the state of the animation so it can be resumed.
+  var means = [ ];
+
   $('#means-play-button').on('click', function () {
     if(running) {
       running = false;
@@ -111,11 +116,12 @@ $(document).ready(function(){
     } else {
       running = true;
       $(this).button('pause'); // Set button to "Pause" text
-      animationInterval = animateMeans(population, meansChart);
+      animationInterval = animateMeans(population, meansChart, means);
     }
   });
 
   $('#means-reset-button').on('click', function () {
     resetMeans(meansChart);
+    means = [ ];
   });
 }); // $(document).ready
