@@ -95,7 +95,7 @@ $(document).ready(function(){
   popChart = new LiveHistogram("#population", popProperties);
 
   // Generate a skewed log-normal population
-  var population = d3.range(1000).map(d3.random.logNormal(0, 1));
+  var population = d3.range(500).map(d3.random.logNormal(0, 1));
   popChart.update(population);
 
   meansChart = new LiveHistogram("#means", meansProperties);

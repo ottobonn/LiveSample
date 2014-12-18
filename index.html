@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <head>
-  <title>LiveSample Central Limit Theorem</title>
+  <title>Central Limit Theorem Demo</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -14,13 +14,18 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
   <article id="page">
-    <h1>Live Sample</h1>
+    <h1>Central Limit Theroem Demo <small>Incremental Sample Plot</small></h1>
 
     <h2>1. View Population</h2>
+    <p>This skew population comes from a log-normal distribution, with E[logX] = 0 and variance 1, and N = 500.</p>
+    <p><span class="label label-info">Note</span> Eventually, this could be an arbitrary skew population. For now, log-normal is easy to generate.</p>
+    <p><span class="label label-info">Note</span> Refreshing the page will generate a new population.</p>
     <div id="population"></div>
 
     <h2>2. Watch Random Means</h2>
-
+    <p>Press "Begin Sampling" to take random samples from the population above, and average them.</p>
+    <p><span class="label label-info">Note</span> Right now, the animation will run until it has taken 100 sample means and plotted them. There are 30 samples in each mean.</p>
+    <p><span class="label label-info">Note</span> Eventually, the number of samples per mean and number of means will be configurable from here.</p>
     <div class="btn-group" role="group" aria-label="Means Chart Controls">
       <button type="button" class="btn btn-primary" id="means-play-button" data-pause-text="Pause Sampling">Begin Sampling</button>
       <button type="button" class="btn btn-default" id="means-reset-button">Reset</button>
