@@ -12,24 +12,24 @@ function getRandomInt(min, max) {
 }
 
 /**
- * singleMean: Compute and plot one mean
- * -------------------------------------
- * Parameters:
- *   population: the data set of which to take a mean of samples
- *   means: the array of means already computed (needed for the chart)
- *   samplesPerMean: the number of samples to take and average together
- *   chart: the chart on which to draw the data
+ * variance: Compute the sample variance of an array of values
+ * -----------------------------------------------------------
+ * Computes the variance of the given array of samples using
+ * the first and second moments.
  */
-function singleMean(population, means, samplesPerMean, chart) {
+function variance (samples) {
   var sum = 0;
-  for (var j = 0; j < samplesPerMean; j++){
-    sum += population[getRandomInt(0, population.length)];
+  var squares = 0;
+  for(var i = 0, l = samples.length; i < l; i++){
+    sum += samples[i];
+    squares += samples[i] ^ 2;
   }
-  // Compute the mean of the samples
-  means.push(sum / samplesPerMean);
-  chart.update(means);
-  // Update the sample means counter
-  d3.select("#meansCounter").text(means.length);
+  // Compute first moment squared
+  var squareMean = (sum / samples.length) ^ 2;
+  // Compute second moment
+  var secondMoment = squares / samples.length;
+  // Variance is E[X^2] - E^2[X]
+  return secondMoment - squareMean;
 }
 
 /**
@@ -46,7 +46,7 @@ function singleMean(population, means, samplesPerMean, chart) {
  * The MEANS parameter is a way to fetch the means computed so far so you can pause
  * the animation and resume where it left off.
  */
- function animateMeans(population, chart, means) {
+ function animateMeans(population, chart, means, callback) {
    // Take many means
    // Each mean the average of samplesPerMean random samples
    var meanCount = 100; // The number of means to find
@@ -69,7 +69,8 @@ function singleMean(population, means, samplesPerMean, chart) {
     } else {
       // If the counter has expired, dequeue future updates.
       clearInterval (animationInterval);
-      console.log("Interval animator called when !counter");
+      // Signal that the tasks are done.
+      callback();
     }
    }, delay); // setTimeout
    return animationInterval;
@@ -108,6 +109,15 @@ $(document).ready(function(){
   // The means array holds the state of the animation so it can be resumed.
   var means = [ ];
 
+  // Callback for when animateMeans finishes with all its tasks.
+  // animateMeans will have cleared its interval already, so all this has to do
+  // is clear the means array, reset the UI, and set the state to not-running.
+  function runComplete(){
+    running = false;
+    $('#means-play-button').button('reset');
+    means = [ ];
+  }
+
   $('#means-play-button').on('click', function () {
     if(running) {
       running = false;
@@ -116,7 +126,7 @@ $(document).ready(function(){
     } else {
       running = true;
       $(this).button('pause'); // Set button to "Pause" text
-      animationInterval = animateMeans(population, meansChart, means);
+      animationInterval = animateMeans(population, meansChart, means, runComplete);
     }
   });
 
