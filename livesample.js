@@ -66,10 +66,9 @@ function progressBar (percent){
  * The MEANS parameter is a way to fetch the means computed so far so you can pause
  * the animation and resume where it left off.
  */
- function animateMeans(population, chart, means, samplesPerMean, callback) {
+ function animateMeans(population, chart, means, samplesPerMean, meanCount, callback) {
    // Take many means
    // Each mean the average of samplesPerMean random samples
-   var meanCount = 1000; // The number of means to find
    var delay = 100; // Delay in milliseconds between each mean displayed
    var count = means.length;
    console.log("Samples per mean: " + samplesPerMean);
@@ -85,7 +84,7 @@ function progressBar (percent){
        chart.update(means);
        // Update the sample means counter
        d3.select("#meansCounter").text(means.length); // TODO remove hardwired select
-       progressBar(count/meanCount*100);
+       progressBar((count + 1) * 100 / meanCount);
        count++;
     } else {
       // If the counter has expired, dequeue future updates.
@@ -128,6 +127,9 @@ $(document).ready(function(){
   // The number of samples in each mean
   var samplesPerMean = 30; // The number of samples in each mean
 
+  // The total number of means to take
+  var meanCount = 100;
+
   // Callback for when animateMeans finishes with all its tasks.
   // animateMeans will have cleared its interval already, so all this has to do
   // is clear the means array, reset the UI, and set the state to not-running.
@@ -144,6 +146,14 @@ $(document).ready(function(){
     $("#samples-per-mean-slider-value").text(samplesPerMean);
   });
 
+  // Construct the means slider
+  $("#means-slider").slider();
+  $("#means-slider").on("slide", function(slideEvent) {
+    meanCount = slideEvent.value;
+    $("#means-slider-value").text(meanCount);
+  });
+
+  // Bind events to the master play button
   $('#means-play-button').on('click', function () {
     if(running) {
       running = false;
@@ -152,10 +162,11 @@ $(document).ready(function(){
     } else {
       running = true;
       $(this).button('pause'); // Set button to "Pause" text
-      animationInterval = animateMeans(population, meansChart, means, samplesPerMean, runComplete);
+      animationInterval = animateMeans(population, meansChart, means, samplesPerMean, meanCount, runComplete);
     }
   });
 
+  // Bind events to the master reset button
   $('#means-reset-button').on('click', function () {
     running = false;
     clearInterval(animationInterval);
