@@ -66,13 +66,13 @@ function progressBar (percent){
  * The MEANS parameter is a way to fetch the means computed so far so you can pause
  * the animation and resume where it left off.
  */
- function animateMeans(population, chart, means, callback) {
+ function animateMeans(population, chart, means, samplesPerMean, callback) {
    // Take many means
    // Each mean the average of samplesPerMean random samples
    var meanCount = 1000; // The number of means to find
-   var samplesPerMean = 30; // The number of samples in each mean
    var delay = 100; // Delay in milliseconds between each mean displayed
    var count = means.length;
+   console.log("Samples per mean: " + samplesPerMean);
 
    var animationInterval = setInterval(function(){
      if (count < meanCount){
@@ -125,6 +125,9 @@ $(document).ready(function(){
   // The means array holds the state of the animation so it can be resumed.
   var means = [ ];
 
+  // The number of samples in each mean
+  var samplesPerMean = 30; // The number of samples in each mean
+
   // Callback for when animateMeans finishes with all its tasks.
   // animateMeans will have cleared its interval already, so all this has to do
   // is clear the means array, reset the UI, and set the state to not-running.
@@ -134,6 +137,13 @@ $(document).ready(function(){
     means = [ ];
   }
 
+  // Contruct the samples-per-mean slider
+  $("#samples-per-mean-slider").slider();
+  $("#samples-per-mean-slider").on("slide", function(slideEvent) {
+    samplesPerMean = slideEvent.value;
+    $("#samples-per-mean-slider-value").text(samplesPerMean);
+  });
+
   $('#means-play-button').on('click', function () {
     if(running) {
       running = false;
@@ -142,7 +152,7 @@ $(document).ready(function(){
     } else {
       running = true;
       $(this).button('pause'); // Set button to "Pause" text
-      animationInterval = animateMeans(population, meansChart, means, runComplete);
+      animationInterval = animateMeans(population, meansChart, means, samplesPerMean, runComplete);
     }
   });
 
