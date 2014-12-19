@@ -56,3 +56,9 @@ h1, h2, h3, h4, h5, h6 {
 .slider-selection {
   background: steelblue;
 }
+.slider-value{
+  color: steelblue;
+}
+.slider{
+  margin-left: 20px;
+}

@@ -52,50 +52,6 @@ function progressBar (percent){
     .text(Math.round(percent) + "%");
 }
 
-/**
- * animateMeans: Animate the computation of many sample means
- * ----------------------------------------------------------
- * Parameters:
- *   population: the data set from which to take the means
- *   chart: the chart on which to draw the animation of mean counts
- *   means: the array of means computed so far. Pass in empty array to start fresh.
- *
- * animateMeans makes use of singleMean, dispatched through a callback on a timer.
- * As single mean calls evaluate in the background, the chart shows the updated
- * count of each mean, such that over time a normal distribution appears.
- * The MEANS parameter is a way to fetch the means computed so far so you can pause
- * the animation and resume where it left off.
- */
- function animateMeans(population, chart, means, samplesPerMean, meanCount, callback) {
-   // Take many means
-   // Each mean the average of samplesPerMean random samples
-   var delay = 100; // Delay in milliseconds between each mean displayed
-   var count = means.length;
-   console.log("Samples per mean: " + samplesPerMean);
-
-   var animationInterval = setInterval(function(){
-     if (count < meanCount){
-       var sum = 0;
-       for (var j = 0; j < samplesPerMean; j++){
-         sum += population[getRandomInt(0, population.length)];
-       }
-       // Compute the mean of the samples
-       means.push(sum / samplesPerMean);
-       chart.update(means);
-       // Update the sample means counter
-       d3.select("#meansCounter").text(means.length); // TODO remove hardwired select
-       progressBar((count + 1) * 100 / meanCount);
-       count++;
-    } else {
-      // If the counter has expired, dequeue future updates.
-      clearInterval (animationInterval);
-      // Signal that the tasks are done.
-      callback();
-    }
-   }, delay); // setTimeout
-   return animationInterval;
-}
-
 $(document).ready(function(){
   popProperties = {
     bins: 20,
@@ -115,20 +71,12 @@ $(document).ready(function(){
 
   meansChart = new LiveHistogram("#means", meansProperties);
 
-  // Master state. If sampling is happening, the app is running.
-  var running = false;
-
-  // The animation interval is set and cleared based on RUNNING.
-  var animationInterval;
-
-  // The means array holds the state of the animation so it can be resumed.
-  var means = [ ];
-
-  // The number of samples in each mean
+  var running = false; // Master state. If sampling is happening, the app is running.
+  var animationInterval; // The animation interval is set and cleared based on RUNNING.
+  var means = [ ]; // The means array holds the state of the animation so it can be resumed.
   var samplesPerMean = 30; // The number of samples in each mean
-
-  // The total number of means to take
-  var meanCount = 100;
+  var meanCount = 100; // The total number of means to take
+  var delay = 100; // Delay in milliseconds between each mean displayed
 
   // Callback for when animateMeans finishes with all its tasks.
   // animateMeans will have cleared its interval already, so all this has to do
@@ -137,6 +85,32 @@ $(document).ready(function(){
     running = false;
     $('#means-play-button').button('reset');
     means = [ ];
+  }
+
+  // animateMeans would take so many parameters, it is easier to make it a closure.
+  function animateMeans() {
+    var count = means.length;
+    var animationInterval = setInterval(function(){
+      if (count < meanCount){
+        var sum = 0;
+        for (var j = 0; j < samplesPerMean; j++){
+          sum += population[getRandomInt(0, population.length)];
+        }
+        // Compute the mean of the samples
+        means.push(sum / samplesPerMean);
+        meansChart.update(means);
+        // Update the sample means counter
+        d3.select("#meansCounter").text(means.length); // TODO remove hardwired select
+        // progressBar((count + 1) * 100 / meanCount);
+        count++;
+      } else {
+        // If the counter has expired, dequeue future updates.
+        clearInterval (animationInterval);
+        // Signal that the tasks are done.
+        runComplete();
+      }
+    }, delay); // setTimeout
+    return animationInterval;
   }
 
   // Contruct the samples-per-mean slider
@@ -153,6 +127,13 @@ $(document).ready(function(){
     $("#means-slider-value").text(meanCount);
   });
 
+  // Construct the delay slider
+  $("#delay-slider").slider();
+  $("#delay-slider").on("slide", function(slideEvent) {
+    delay = slideEvent.value;
+    $("#delay-slider-value").text(delay);
+  });
+
   // Bind events to the master play button
   $('#means-play-button').on('click', function () {
     if(running) {
@@ -162,7 +143,7 @@ $(document).ready(function(){
     } else {
       running = true;
       $(this).button('pause'); // Set button to "Pause" text
-      animationInterval = animateMeans(population, meansChart, means, samplesPerMean, meanCount, runComplete);
+      animationInterval = animateMeans();
     }
   });
 
@@ -174,6 +155,6 @@ $(document).ready(function(){
     meansChart.reset();
     d3.select("#meansCounter").text(0); // TODO remove hardwired select
     means = [ ];
-    progressBar(0);
+    // progressBar(0);
   });
 }); // $(document).ready
